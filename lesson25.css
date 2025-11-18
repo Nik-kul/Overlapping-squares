@@ -1,0 +1,42 @@
+.body{
+    color: azure;
+
+}
+
+.container{
+    width: 500px;
+    height: 500px;
+    background-color: azure;
+    position: relative;
+    margin: 40px auto;
+    
+}
+
+
+.square{
+    width: 200px;
+    height: 200px;
+}
+
+.sq1{
+    background-color: rgb(203, 90, 109); 
+    top:20px;
+    left: 25px;
+    position: absolute;
+    z-index: 1;
+}
+.sq2{
+    background-color: rgb(66, 48, 203);
+    top:155px;
+    left: 150px;
+    position: absolute;
+    z-index: 2;
+}
+
+.sq3{
+    background-color: rgb(28, 203, 54);
+    top:275px;
+    left:275px;
+    position: absolute;
+    z-index: 1;
+}
