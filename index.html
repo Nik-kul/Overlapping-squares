@@ -1,64 +1,330 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Домашнє завдання JS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .gallery {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 1200px;
+
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .gallery__item {
+      overflow: hidden;
+    }
+
+    .gallery__image {
+      display: block;
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 250ms ease;
+    }
+
+    .gallery__image:hover {
+      transform: scale(1.03);
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition: opacity 250ms ease;
+      z-index: 1000;
+    }
+
+    .lightbox.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox__overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .lightbox__content {
+      position: relative;
+      z-index: 2;
+
+      max-width: 90%;
+      max-height: 90%;
+    }
+
+    .lightbox__image {
+      display: block;
+
+      max-width: 90vw;
+      max-height: 85vh;
+
+      object-fit: contain;
+    }
+
+    .lightbox__button {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+
+      z-index: 3;
+
+      border: none;
+      background: transparent;
+
+      color: white;
+      font-size: 50px;
+
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <h1>Перевірте консоль браузера (F12)</h1>
+  <ul class="gallery js-gallery"></ul>
 
-    <script>
-        // 1. Змінна age
-        let age = 12;
-        console.log(age);
+  <div class="lightbox js-lightbox">
+    <div class="lightbox__overlay"></div>
 
-        // 2. Змінна name
-        let name = "Nikita";
-        console.log(name);
+    <div class="lightbox__content">
+      <img
+        class="lightbox__image"
+        src=""
+        alt=""
+      />
+    </div>
 
-        // 3. Змінна isStudent
-        let isStudent = true;
-        console.log(isStudent);
+    <button
+      type="button"
+      class="lightbox__button"
+      data-action="close-lightbox"
+    >
+      ×
+    </button>
+  </div>
 
-        // 4. Змінна myString
-        let myString = "Ніколи не здавайся!";
-        console.log(myString);
+  <script>
+    const galleryItems = [
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2019/05/14/16/43/rchids-4202820__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2019/05/14/16/43/rchids-4202820_1280.jpg',
+        description: 'Hokkaido Flower',
+      },
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2013/11/15/13/57/shipping-containers-210897__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2013/11/15/13/57/shipping-containers-210897_1280.jpg',
+        description: 'Container Haulage Freight',
+      },
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2017/01/20/15/06/orange-1995079__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2017/01/20/15/06/orange-1995079_1280.jpg',
+        description: 'Aerial Beach View',
+      },
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2017/07/31/11/21/people-2557396__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2017/07/31/11/21/people-2557396_1280.jpg',
+        description: 'Flower Blooms',
+      },
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2017/04/11/03/24/landscape-2220434__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2017/04/11/03/24/landscape-2220434_1280.jpg',
+        description: 'Alpine Mountains',
+      },
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2019/02/13/11/20/landscape-3994657__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2019/02/13/11/20/landscape-3994657_1280.jpg',
+        description: 'Lake Sailing',
+      },
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg',
+        description: 'Mountain Flowers',
+      },
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2016/11/29/09/16/architecture-1868667__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2016/11/29/09/16/architecture-1868667_1280.jpg',
+        description: 'Mountain Landscape',
+      },
+      {
+        preview:
+          'https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832__340.jpg',
+        original:
+          'https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_1280.jpg',
+        description: 'Lighthouse Coast Sea',
+      },
+    ];
 
-        // 5. Змінна myNumber
-        let myNumber = 25;
-        myNumber = myNumber + 10;
-        console.log(myNumber);
+    const galleryRef = document.querySelector('.js-gallery');
+    const lightboxRef = document.querySelector('.js-lightbox');
+    const lightboxImageRef = document.querySelector('.lightbox__image');
+    const closeButtonRef = document.querySelector(
+      '[data-action="close-lightbox"]'
+    );
+    const overlayRef = document.querySelector('.lightbox__overlay');
 
-        // 6. Змінна myNull
-        let myNull = null;
-        console.log(myNull);
+    let currentImageIndex = 0;
 
-        // 7. Введення імені через prompt()
-        let userName = prompt("Введіть своє ім’я");
-        alert("Привіт, " + userName + "!");
-        console.log(typeof userName);
+    const galleryMarkup = galleryItems
+      .map(({ preview, original, description }) => {
+        return `
+          <li class="gallery__item">
+            <a
+              class="gallery__link"
+              href="${original}"
+            >
+              <img
+                class="gallery__image"
+                src="${preview}"
+                data-source="${original}"
+                alt="${description}"
+              />
+            </a>
+          </li>
+        `;
+      })
+      .join('');
 
-        // 8. confirm()
-        let userAnswer = confirm("Ви дійсно хочете покинути сторінку?");
-        console.log(userAnswer);
+    galleryRef.insertAdjacentHTML('beforeend', galleryMarkup);
 
-        // 9. alert() та confirm()
-        alert("Увага! Дія може бути небезпечною.");
+    galleryRef.addEventListener('click', onGalleryClick);
+    closeButtonRef.addEventListener('click', closeLightbox);
+    overlayRef.addEventListener('click', closeLightbox);
 
-        let continueAction = confirm(
-            "Ви впевнені, що хочете продовжити?"
-        );
+    function onGalleryClick(event) {
+      event.preventDefault();
 
-        console.log(continueAction);
+      if (!event.target.classList.contains('gallery__image')) {
+        return;
+      }
 
-        if (continueAction) {
-            alert("Дію підтверджено.");
-        } else {
-            alert("Дію скасовано.");
-        }
-    </script>
+      const largeImageUrl = event.target.dataset.source;
+
+      currentImageIndex = galleryItems.findIndex(
+        item => item.original === largeImageUrl
+      );
+
+      lightboxRef.classList.add('is-open');
+
+      lightboxImageRef.src = largeImageUrl;
+      lightboxImageRef.alt = event.target.alt;
+
+      window.addEventListener('keydown', onKeyDown);
+    }
+
+    function closeLightbox() {
+      lightboxRef.classList.remove('is-open');
+
+      lightboxImageRef.src = '';
+      lightboxImageRef.alt = '';
+
+      window.removeEventListener('keydown', onKeyDown);
+    }
+
+    function onKeyDown(event) {
+      if (event.code === 'Escape') {
+        closeLightbox();
+      }
+
+      if (event.code === 'ArrowRight') {
+        showNextImage();
+      }
+
+      if (event.code === 'ArrowLeft') {
+        showPreviousImage();
+      }
+    }
+
+    function showNextImage() {
+      currentImageIndex += 1;
+
+      if (currentImageIndex >= galleryItems.length) {
+        currentImageIndex = 0;
+      }
+
+      updateLightboxImage();
+    }
+
+    function showPreviousImage() {
+      currentImageIndex -= 1;
+
+      if (currentImageIndex < 0) {
+        currentImageIndex = galleryItems.length - 1;
+      }
+
+      updateLightboxImage();
+    }
+
+    function updateLightboxImage() {
+      const currentImage = galleryItems[currentImageIndex];
+
+      lightboxImageRef.src = currentImage.original;
+      lightboxImageRef.alt = currentImage.description;
+    }
+  </script>
 
 </body>
 </html>
